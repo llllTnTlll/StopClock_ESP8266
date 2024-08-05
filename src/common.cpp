@@ -1,45 +1,4 @@
-#include "timer.hpp"
-
-StopWatch::StopWatch(Screen *&myScreen)
-    : screen(myScreen), isRun(false)
-{
-    time = new Time();
-}
-
-StopWatch::~StopWatch()
-{
-    screen->~Screen();
-}
-
-void StopWatch::ShowTime()
-{
-    String currentTime = time->getCurrentTime();
-    screen->WriteString(currentTime);
-    screen->Print();
-}
-
-void StopWatch::AddTime(uint8_t hours, uint8_t minutes, uint8_t seconds, uint16_t milliseconds)
-{
-    time->AddTime(hours, minutes, seconds, milliseconds);
-}
-
-void StopWatch::MinusTime(uint8_t hours, uint8_t minutes, uint8_t seconds, uint16_t milliseconds)
-{
-    time->MinusTime(hours, minutes, seconds, milliseconds);
-}
-
-bool StopWatch::ReadRunStatus(){
-    return isRun;
-}
-
-void StopWatch::SetRunStatus(bool status)
-{
-    isRun = status;
-}
-
-String StopWatch::GetCurrentTime(){
-    return time->getCurrentMin() + time->getCurrentSec() + time->getCurrentMSec();
-}
+#include "common.hpp"
 
 Time::Time(uint8_t h, uint8_t m, uint8_t s, uint16_t ms)
 {
@@ -83,6 +42,10 @@ void Time::AddTime(uint8_t hours, uint8_t minutes, uint8_t seconds, uint16_t mil
     t.hour += hours;
 
     // 处理超过24小时
+    if (t.hour >= 24)
+    {
+        t.hour %= 24; // 处理超过24小时的情况
+    }
 }
 
 void Time::MinusTime(uint8_t hours, uint8_t minutes, uint8_t seconds, uint16_t milliseconds)

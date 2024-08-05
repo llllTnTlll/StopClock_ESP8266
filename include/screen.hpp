@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 #include "PT63XX.hpp"
-#include "font.hpp"
+#include "common.hpp"
 
 struct Coordinate
 {

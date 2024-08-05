@@ -1,14 +1,7 @@
 #include <Arduino.h>
 #include <Ticker.h>
 #include "screen.hpp"
-#include "timer.hpp"
-
-Screen *myScreen;
-StopWatch *myStopWatch;
-Ticker ticker;
-
-std::vector<bool> symbolMask = {1, 1};
-uint8_t counter = 0;
+#include "funcs.hpp"
 
 enum RunMode
 {
@@ -16,6 +9,12 @@ enum RunMode
   TIME_ADJUST_MODE,
 };
 
+Screen *myScreen;
+StopWatch *myStopWatch;
+Ticker ticker;
+
+uint8_t counter = 0;
+std::vector<bool> symbolMask = {1, 1};
 RunMode CURRENT_RUN_MODE;
 
 // 按键
@@ -63,18 +62,27 @@ void OnTicker()
 {
   if (myStopWatch->ReadRunStatus())
   {
+    // 控制冒号每秒闪烁
     if (counter >= 100)
     {
       for (std::size_t i = 0; i < symbolMask.size(); ++i)
       {
         symbolMask[i] = !symbolMask[i];
       }
+      
       myScreen->DisplaySymbol(symbolMask);
       counter = 0;
     }
-    myStopWatch->MinusTime(0, 0, 0, 10);
+
+    // 计时至0时自动暂停
     if(myStopWatch->GetCurrentTime() == "000000"){
       myStopWatch->SetRunStatus(0);
+      symbolMask = {1, 1};
+      myScreen->DisplaySymbol(symbolMask);
+      counter = 0;
+    }
+    else{
+      myStopWatch->MinusTime(0, 0, 0, 10);
     }
     counter++;
   }
@@ -106,6 +114,8 @@ void setup()
 
   // 启动定时器
   ticker.attach_ms(10, OnTicker);
+
+  myScreen->DisplaySymbol(symbolMask);
 }
 
 void loop()
@@ -125,6 +135,9 @@ void loop()
     if (isBtnCPressed)
     {
       myStopWatch->SetRunStatus(!myStopWatch->ReadRunStatus());
+      symbolMask = {1, 1};
+      myScreen->DisplaySymbol(symbolMask);
+      counter = 0;
     }
     break;
 

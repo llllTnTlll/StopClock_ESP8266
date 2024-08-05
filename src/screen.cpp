@@ -82,7 +82,7 @@ void Screen::WriteNum(int num, uint8_t width, uint8_t prec, std::vector<bool> sy
 void Screen::DisplaySymbol(const std::vector<bool> symbolMask)
 {
     if (symbolMask.size() != ScreenSymbolsIndex.size()) {
-        // Serial.println("Error: symbolMask and ScreenSymbolsIndex size mismatch.");
+        Serial.println("Error: symbolMask and ScreenSymbolsIndex size mismatch.");
         return;
     }
 
