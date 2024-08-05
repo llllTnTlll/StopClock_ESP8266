@@ -13,7 +13,6 @@ Screen *myScreen;
 StopWatch *myStopWatch;
 Ticker ticker;
 
-uint8_t counter = 0;
 std::vector<bool> symbolMask = {1, 1};
 RunMode CURRENT_RUN_MODE;
 
@@ -62,8 +61,7 @@ void OnTicker()
 {
   if (myStopWatch->ReadRunStatus())
   {
-    // 控制冒号每秒闪烁
-    if (counter >= 100)
+    if (myStopWatch->GetBink())
     {
       for (std::size_t i = 0; i < symbolMask.size(); ++i)
       {
@@ -71,7 +69,6 @@ void OnTicker()
       }
       
       myScreen->DisplaySymbol(symbolMask);
-      counter = 0;
     }
 
     // 计时至0时自动暂停
@@ -79,12 +76,10 @@ void OnTicker()
       myStopWatch->SetRunStatus(0);
       symbolMask = {1, 1};
       myScreen->DisplaySymbol(symbolMask);
-      counter = 0;
     }
     else{
       myStopWatch->MinusTime(0, 0, 0, 10);
     }
-    counter++;
   }
   else
   {
@@ -137,7 +132,6 @@ void loop()
       myStopWatch->SetRunStatus(!myStopWatch->ReadRunStatus());
       symbolMask = {1, 1};
       myScreen->DisplaySymbol(symbolMask);
-      counter = 0;
     }
     break;
 
@@ -149,5 +143,6 @@ void loop()
   isBtnBPressed = false;
   isBtnCPressed = false;
 
+  // 刷新屏幕
   myStopWatch->ShowTime();
 }
